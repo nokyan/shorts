@@ -1,6 +1,7 @@
 package net.nokyan.shorts.controller;
 
 import net.nokyan.shorts.exception.AlreadyExistsException;
+import net.nokyan.shorts.service.AdminService;
 import net.nokyan.shorts.service.UrlShortenerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class LinkController {
 
     @Autowired
     private UrlShortenerService urlShortenerService;
+
+    @Autowired
+    private AdminService adminService;
 
     @Value("${vanity-auth-token}")
     private String VANITY_AUTH_TOKEN;
@@ -115,16 +119,12 @@ public class LinkController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> shortenUrlVanity(@RequestHeader("ADMIN_AUTH") String adminAuthToken,
             @PathVariable String id, HttpServletRequest request) {
-        if (StringUtils.hasText(adminAuthToken) || !adminAuthToken.equals(ADMIN_AUTH_TOKEN)) {
+        if (!StringUtils.hasText(adminAuthToken) || !adminAuthToken.equals(ADMIN_AUTH_TOKEN)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String scheme = request.getScheme();
-        String ownUrl = request.getServerName();
-        urlShortenerService.deleteUrl(id);
+        adminService.deleteUrl(id);
 
-        String response = String.format("%s://%s/%s", scheme, ownUrl, id);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().build();
     }
 }

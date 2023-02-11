@@ -104,12 +104,4 @@ public class UrlShortenerService {
         return mapping.getLongUrl();
     }
 
-    /**
-     * Deletes a short URL and its associated data.
-     *
-     * @param id the shortened ID to be deleted
-     */
-    public void deleteUrl(String id) {
-        urlRepository.deleteById(id);
-    }
 }

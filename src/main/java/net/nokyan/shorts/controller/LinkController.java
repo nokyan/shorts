@@ -106,24 +106,24 @@ public class LinkController {
     }
 
     /**
-     * Deletes a vanity URL.
+     * Deletes a URL.
      *
      * @param adminAuthToken authentication token for administrator access
-     * @param vanityId       ID of the vanity URL to be deleted
+     * @param id             ID of the URL to be deleted
      * @return ResponseEntity with an error code if not authorized or null
      */
-    @DeleteMapping("/{vanityId}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> shortenUrlVanity(@RequestHeader("ADMIN_AUTH") String adminAuthToken,
-            @PathVariable String vanityId, HttpServletRequest request) {
+            @PathVariable String id, HttpServletRequest request) {
         if (StringUtils.hasText(adminAuthToken) || !adminAuthToken.equals(ADMIN_AUTH_TOKEN)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String scheme = request.getScheme();
         String ownUrl = request.getServerName();
-        urlShortenerService.deleteUrl(vanityId);
+        urlShortenerService.deleteUrl(id);
 
-        String response = String.format("%s://%s/%s", scheme, ownUrl, vanityId);
+        String response = String.format("%s://%s/%s", scheme, ownUrl, id);
 
         return ResponseEntity.ok(response);
     }

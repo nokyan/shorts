@@ -32,7 +32,7 @@ To use the API, send a request to one of the three endpoints with the required p
 * For shortening URLs, send a POST request to `/` with a URL as a raw string in the request body.
 * For shortening URLs, send a POST request to `/{vanityId}` with a URL as a raw string in the request body and the VANITY_AUTH header field set to the token in `src/main/resources/application.properties`.
 * For redirecting to original URLs, send a GET request to `{shortUrl}`.
-* For deleting vanity URLs, send a DELETE request to `{vanityId}` with an `ADMIN_AUTH` token in the request header.
+* For deleting URLs, send a DELETE request to `/{id}` with an `ADMIN_AUTH` token in the request header.
 
 ## To-do
 

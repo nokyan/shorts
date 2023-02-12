@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import ky.korins.blake3.Blake3;
 import ky.korins.blake3.Hasher;
+import lombok.extern.slf4j.Slf4j;
 import net.nokyan.shorts.exception.AlreadyExistsException;
 import net.nokyan.shorts.model.UrlMapping;
 import net.nokyan.shorts.repository.UrlRepository;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 public class UrlShortenerService {
 
@@ -92,6 +94,9 @@ public class UrlShortenerService {
         String id = generateId(longUrl);
         UrlMapping mapping = new UrlMapping(id, longUrl, false, creatorIp);
         urlRepository.save(mapping);
+
+        log.info(String.format("Created new short: %s → %s", id, longUrl));
+
         return id;
     }
 
@@ -110,6 +115,8 @@ public class UrlShortenerService {
 
         UrlMapping mapping = new UrlMapping(id, longUrl, true, creatorIp);
         urlRepository.save(mapping);
+
+        log.info(String.format("Created new vanity short: %s → %s", id, longUrl));
     }
 
     /**
@@ -122,6 +129,9 @@ public class UrlShortenerService {
         UrlMapping mapping = urlRepository.findById(id).orElseThrow();
         mapping.updateLastAccessedTimestamp();
         urlRepository.save(mapping);
+
+        log.debug(String.format("Redirecting %s → %s", id, mapping.getLongUrl()));
+
         return mapping;
     }
 

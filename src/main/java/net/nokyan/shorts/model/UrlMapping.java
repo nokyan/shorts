@@ -3,7 +3,6 @@ package net.nokyan.shorts.model;
 import java.net.InetAddress;
 import java.net.URL;
 import java.time.Instant;
-import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -27,11 +26,11 @@ public class UrlMapping {
     @Getter
     @Setter
     @NonNull
-    private Date creationTimestamp;
+    private Instant creationTimestamp;
 
     @Getter
     @Setter
-    private Date lastAccessedTimestamp;
+    private Instant lastAccessedTimestamp;
 
     @Getter
     @Setter
@@ -43,7 +42,7 @@ public class UrlMapping {
 
     @PrePersist
     public void prePersistHook() {
-        this.creationTimestamp = Date.from(Instant.now());
+        this.creationTimestamp = Instant.now();
     }
 
     public UrlMapping() {
@@ -63,6 +62,6 @@ public class UrlMapping {
     }
 
     public void updateLastAccessedTimestamp() {
-        this.setLastAccessedTimestamp(Date.from(Instant.now()));
+        this.setLastAccessedTimestamp(Instant.now());
     }
 }

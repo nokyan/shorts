@@ -7,10 +7,12 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.nokyan.shorts.model.BlocklistEntry;
 import net.nokyan.shorts.repository.BlocklistRepository;
 import net.nokyan.shorts.repository.UrlRepository;
 
+@Slf4j
 @Service
 public class AdminService {
     @Autowired
@@ -36,6 +38,8 @@ public class AdminService {
     public void appendBlocklist(Pattern regex) {
         BlocklistEntry blocklistEntry = new BlocklistEntry(regex);
         blocklistRepository.save(blocklistEntry);
+
+        log.info(String.format("Added new regex to blocklist: %s", regex.toString()));
     }
 
     /**
@@ -55,6 +59,7 @@ public class AdminService {
      * @param regex Regex that is supposed to be removed
      */
     public void popBlocklist(Pattern regex) {
+        log.info(String.format("Removed regex from blocklist: %s", regex.toString()));
         blocklistRepository.deleteById(regex);
     }
 
@@ -65,6 +70,8 @@ public class AdminService {
      */
     public void removeBlocklist(Collection<Pattern> regexes) {
         blocklistRepository.deleteAllById(regexes);
+        regexes.stream()
+                .forEach(regex -> log.info(String.format("Removed regex from blocklist: %s", regex.toString())));
     }
 
     /**

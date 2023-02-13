@@ -32,9 +32,13 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    private boolean validateAdminToken(String token) {
+        return StringUtils.hasText(token) && token.equals(adminAuthToken);
+    }
+
     @GetMapping("/blocklist")
     public ResponseEntity<String> getBlocklist(@RequestHeader("ADMIN_AUTH") String adminAuth) {
-        if (!StringUtils.hasText(adminAuth) || !adminAuthToken.equals(adminAuth)) {
+        if (!validateAdminToken(adminAuth)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -46,7 +50,7 @@ public class AdminController {
     @PostMapping("/blocklist")
     public ResponseEntity<String> appendBlocklist(@RequestHeader("ADMIN_AUTH") String adminAuth,
             @RequestBody String regexes) {
-        if (!StringUtils.hasText(adminAuth) || !adminAuthToken.equals(adminAuth)) {
+        if (!validateAdminToken(adminAuth)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -63,7 +67,7 @@ public class AdminController {
     @DeleteMapping("/blocklist")
     public ResponseEntity<String> popBlocklist(@RequestHeader("ADMIN_AUTH") String adminAuth,
             @RequestBody String regexes) {
-        if (!StringUtils.hasText(adminAuth) || !adminAuthToken.equals(adminAuth)) {
+        if (!validateAdminToken(adminAuth)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

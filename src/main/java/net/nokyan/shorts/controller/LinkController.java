@@ -43,16 +43,41 @@ public class LinkController {
     @Value("${admin-auth-token}")
     private String adminAuthToken;
 
+    private boolean validateVanityToken(String token) {
+        return StringUtils.hasText(token) && token.equals(vanityAuthToken);
+    }
+
     /**
-     * Shortens a given long URL and returns a shortened URL or an error if it
-     * already exists. Allows for vanity short URLs if the correct token is
-     * supplied, otherwise an ID will be generated.
+     * Creates a shortened URL with an optional vanity ID.
      *
-     * @param vanityAuth    authentication token for vanity URL (optional)
-     * @param vanityId      ID of the vanity URL (optional)
-     * @param request       HTTP request object
-     * @param longUrlString long URL to be shortened
-     * @return ResponseEntity with a shortened URL or an error code
+     * <p>
+     * If a vanity ID is provided, it checks if the provided authentication token
+     * matches
+     * the expected token. If no valid authentication is found or the long URL is
+     * blocked,
+     * appropriate HTTP status codes are returned.
+     * </p>
+     *
+     * @param vanityAuth    the authentication token for using a vanity ID
+     *                      (optional)
+     * @param vanityId      the custom vanity identifier for the shortened URL
+     *                      (optional)
+     * @param request       the HttpServletRequest containing details about the
+     *                      client request
+     * @param longUrlString the original long URL to be shortened, provided as a
+     *                      string
+     *
+     * @return a ResponseEntity containing the shortened URL if successful,
+     *         or an appropriate HTTP status code indicating an error:
+     *         <ul>
+     *         <li>{@code HttpStatus.UNAUTHORIZED} if authentication fails for
+     *         vanity ID</li>
+     *         <li>{@code HttpStatus.BAD_REQUEST} if the long URL is malformed</li>
+     *         <li>{@code HttpStatus.FORBIDDEN} if the long URL is blocked by admin
+     *         settings</li>
+     *         <li>{@code HttpStatus.CONFLICT} if a vanity ID already exists with
+     *         another URL</li>
+     *         </ul>
      */
     @PostMapping(value = { "/{vanityId}", "/" })
     public ResponseEntity<String> shortenUrlVanity(
@@ -61,7 +86,7 @@ public class LinkController {
             @RequestBody String longUrlString) {
         boolean isVanity = StringUtils.hasText(vanityId);
 
-        if (isVanity && (!StringUtils.hasText(vanityAuth) || !vanityAuth.equals(vanityAuthToken))) {
+        if (isVanity && !validateVanityToken(vanityAuth)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 

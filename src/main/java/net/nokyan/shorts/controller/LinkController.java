@@ -126,14 +126,14 @@ public class LinkController {
     /**
      * Deletes a URL.
      *
-     * @param adminAuthToken authentication token for administrator access
-     * @param id             ID of the URL to be deleted
+     * @param adminAuth authentication token for administrator access
+     * @param id        ID of the URL to be deleted
      * @return ResponseEntity with an error code if not authorized or null
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteShort(@RequestHeader("ADMIN_AUTH") String adminAuthToken,
+    public ResponseEntity<String> deleteShort(@RequestHeader("ADMIN_AUTH") String adminAuth,
             @PathVariable String id, HttpServletRequest request) {
-        if (!StringUtils.hasText(adminAuthToken) || !adminAuthToken.equals(adminAuthToken)) {
+        if (!StringUtils.hasText(adminAuth) || !adminAuth.equals(adminAuthToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
